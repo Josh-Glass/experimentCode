@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- imports -->
+        <script src="static/utils.js"></script>
+        <script src='static/testExp/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/testExp/instructions.js'></script>
+        <script src='static/testExp/ready.js'></script>
+        <script src='static/testExp/classification.js'></script>
+        <script src='static/testExp/sort.js'></script>
+        <script src='static/testExp/typicality.js'></script>
+        <script src='static/testExp/study.js'></script>
+        <script src='static/testExp/dragAndDrop.js'></script>
+        <!-- ^ these are all the experiment phases we commonly use in the kurtz lab -->
+        <!-- <link href="static/testExp/materials/styles.css" rel="stylesheet" type="text/css"></link> -->
+
+    </head>
+    
+    <!-- <body style = 'margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;'> -->
+    <body style = 'background: rgb(190,190,190);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; } // <-- use this to warn users if they accidently hit the back button and delete all their data (its gunna save a lot of headaches)
+
+            expId = 'testExp'
+
+            subject = {
+                id: get_subject_id(),
+                condition: get_condition(),
+                results: {
+                    //'trainPhase': [],
+                    'typicality': [],
+                    'dragAndDrop': [],
+                }
+            }
+
+
+            marbles = {
+
+                1: [
+
+                'static/testExp/materials/marbles/red1.jpg',
+                'static/testExp/materials/marbles/red2.jpg',
+                'static/testExp/materials/marbles/red3.jpg',
+                'static/testExp/materials/marbles/blue1.jpg',
+                'static/testExp/materials/marbles/blue2.jpg',
+                'static/testExp/materials/marbles/blue3.jpg',
+                
+
+
+                ],
+
+                2: [
+
+                'static/testExp/materials/marbles/red1.jpg',
+                'static/testExp/materials/marbles/red2.jpg',
+                'static/testExp/materials/marbles/red3.jpg',
+                'static/testExp/materials/marbles/blue1.jpg',
+                'static/testExp/materials/marbles/blue2.jpg',
+                'static/testExp/materials/marbles/blue3.jpg',
+                
+
+
+                ]
+            }
+
+            stim = {
+
+                1: [
+                    'static/testExp/materials/condition1/0000.png',
+                    'static/testExp/materials/condition1/0110.png',
+                    'static/testExp/materials/condition1/0111.png',
+                    'static/testExp/materials/condition1/1101.png',
+                    'static/testExp/materials/condition1/1110.png',
+                ],
+
+                2: [
+                    'static/testExp/materials/condition2/0000.png',
+                    'static/testExp/materials/condition2/0110.png',
+                    'static/testExp/materials/condition2/0111.png',
+                    'static/testExp/materials/condition2/1101.png',
+                    'static/testExp/materials/condition2/1110.png',
+                ],
+            }
+
+            labels = {
+                1: ['a','a','b','b','b'],
+                2: ['a','a','a','b','b'],
+            }
+
+
+
+            train_params = {
+                'objects': stim[subject['condition']],
+                'labels': labels[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 2,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+            }
+
+            typicality_params = {
+                'objects': stim[subject['condition']],
+                'labels': labels[subject['condition']],
+                'n_blocks': 1,
+                'results': subject['results']['typicality'],
+                'sliderBins': 7,
+                'binLabels': ['0','1','2','3','4','5','6','7']
+            }
+
+
+            /** - - - Run Experiment via an Event Object - - - **/
+            eventGraph = {
+                instructions: function () {
+                    instructions.start(
+                        {text: 'Welcome to the experiment; glad you could join. These are the insructions rendered in <b>HTML</b> format; so, all the <i>HTML</i> tags youd normally use affect the text here. <br><br> click next to continue...'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready()
+                        }, 100)}
+                    )
+                },
+
+                ready: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.dragAndDrop()
+                        }, 100)}
+                    )
+                },
+
+               /* training: function () {
+                    classification.start(
+                        train_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.typicality()
+                        },500)}
+                    )
+                },
+
+                typicality: function () {
+                    typicality.start(
+                        typicality_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.dragAndDrop()
+                        },500)}
+                    )
+                },*/
+
+                dragAndDrop: function () {
+                    dragAndDrop.start(
+                        {'results': subject['results']['dragAndDrop']}, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+                end: function () {
+                    instructions.start({text: 'All Finished!'}, function () {
+                        viewData(JSON.stringify(subject['results']), 'Downloads/test.txt', 'text/plain') // <-- spits out the data if you want to look at it; this is whats going to get sent to the server
+                        next(expId, subject['id'], subject['condition'], subject) // <-- send data to server and start next experiment | this comes from the "utils.js" script
+                    })
+                },
+            }
+
+            // initialize first event
+            eventGraph.instructions()
+
+
+        </script>
+
+    </body>
+</html>

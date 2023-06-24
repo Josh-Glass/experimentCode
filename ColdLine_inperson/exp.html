@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- imports -->
+        
+        <!-- webrunner dependency -->
+        <script src='static/utils.js'></script>
+
+        <script src='static/experiments/line/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/experiments/line/instructions.js'></script>
+        <script src='static/experiments/line/ready.js'></script>
+        <script src='static/experiments/line/classification.js'></script>
+        <script src='static/experiments/line/sort.js'></script>
+        <script src='static/experiments/line/typicality.js'></script>
+        <script src='static/experiments/line/study.js'></script>
+        <script src='static/experiments/line/similarity.js'></script>
+
+        <!-- ^ these are all the experiment phases we commonly use in the kurtz lab -->
+        <!-- <link href="static/testExp/materials/styles.css" rel="stylesheet" type="text/css"></link> -->
+
+        <style>
+            #instructions{
+
+                margin-left: 40px;
+                margin-right: 40px;
+
+            }
+        </style>
+
+    </head>
+    
+    <!-- <body style = 'margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;'> -->
+    <body style = 'background: rgb(255, 255, 255);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; } // <-- use this to warn users if they accidently hit the back button and delete all their data (its gunna save a lot of headaches)
+
+            expId = 'line'
+
+            
+
+            subject = {
+                id: localStorage.getItem('subject_id'),
+                //id: '1',
+                condition: localStorage.getItem('condition'),
+                //condition: '1',
+                results: {
+                    'study': [],
+                    'typicality1': [],
+                    'trainPhase': [],
+                    'typicality2': [],
+                    'similarity': [],
+                    'testPhase' : [],
+
+                }
+            }
+
+
+
+
+            //SIMILARITY PHASE  THIS CAN BE USED FOR BOTH INITIAL SIM AND POST SIM
+            stim_sim1 = {
+
+                1: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/T500.png',
+
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                'static/experiments/line/materials/T1000.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+                    
+                ],
+            }
+
+            labels_sim1 = {
+                1: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                
+            }
+
+
+            sim_params = {
+                'objects': stim_sim1[subject['condition']],
+                'labels': labels_sim1[subject['condition']],
+                'n_blocks': 14,
+                'results': subject['results']['similarity'],
+                'sliderBins': 6,
+                'binLabels': ['1','2','3','4','5','6','7',]
+            }
+
+        
+            /** - - - Run Experiment via an Event Object - - - **/
+
+            /*** CONDITION 1 Blcoked A, TACL with 2 remaining cats***/
+            if (subject['condition'] == 1) {
+            eventGraph = {
+
+
+                instructions: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Welcome to the experiment (glad you can participate)!<br><br>In this experiment, you will be asked to rate how similar you think two lines are on a scale from “Extremely Dissimilar” to “Extremely Similar”.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.similarity()
+                        }, 100)}
+                    )
+                },
+                
+
+                similarity: function () {
+                    similarity.start(
+                        sim_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+               
+                end: function () {
+                    instructions.start({text: 'All Finished! Please Press "Next" '}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions()
+        }
+
+
+
+
+       
+
+        </script>
+
+    </body>
+</html>

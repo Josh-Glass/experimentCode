@@ -1,0 +1,1 @@
+Now it is time to move to the next phase: You will be asked to use your knowledge to decide which which type of shape is being presented. Some of the shapes will look like those in the training phase, but some will be completely new. Since these are unclassified shapes, there will not be corrective feedback as you had in training.

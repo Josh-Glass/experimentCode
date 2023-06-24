@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- imports -->
+        
+        <!-- webrunner dependency -->
+        <script src='static/utils.js'></script>
+
+        <script src='static/experiments/alternate/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/experiments/alternate/instructions.js'></script>
+        <script src='static/experiments/alternate/ready.js'></script>
+        <script src='static/experiments/alternate/dragAndDrop.js'></script>
+        <script src='static/experiments/alternate/classification.js'></script>
+        <script src='static/experiments/alternate/sort.js'></script>
+        <script src='static/experiments/alternate/typicality.js'></script>
+        <script src='static/experiments/alternate/study.js'></script>
+        <!-- ^ these are all the experiment phases we commonly use in the kurtz lab -->
+        <!-- <link href="static/testExp/materials/styles.css" rel="stylesheet" type="text/css"></link> -->
+
+        <style>
+            #instructions{
+
+                margin-left: 40px;
+                margin-right: 40px;
+                font-size: x-large;
+
+            }
+        </style>
+
+    </head>
+    
+    <!-- <body style = 'margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;'> -->
+    <body style = 'background: rgb(255, 255, 255);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; } // <-- use this to warn users if they accidently hit the back button and delete all their data (its gunna save a lot of headaches)
+
+            expId = 'alternate'
+
+            
+
+            subject = {
+                //id: localStorage.getItem('subject_id'),
+                id: '1',
+                //condition: localStorage.getItem('condition'),
+                 condition: '3',
+                results: {
+                    'trainPhase': [],
+                    'testPhase': [],
+                    'dragAndDrop': [],
+
+                }
+            }
+
+            stim_train = {
+
+                1: [
+                    'static/experiments/alternate/materials/stim1D/A1.JPG',
+                    'static/experiments/alternate/materials/stim1D/A2.JPG',
+                    'static/experiments/alternate/materials/stim1D/A3.JPG',
+                    'static/experiments/alternate/materials/stim1D/A4.JPG',
+                    'static/experiments/alternate/materials/stim1D/A5.JPG',
+                    'static/experiments/alternate/materials/stim1D/A6.JPG',
+
+                    'static/experiments/alternate/materials/stim1D/B1.JPG',
+                    'static/experiments/alternate/materials/stim1D/B2.JPG',
+                    'static/experiments/alternate/materials/stim1D/B3.JPG',
+                    'static/experiments/alternate/materials/stim1D/B4.JPG',
+                    'static/experiments/alternate/materials/stim1D/B5.JPG',
+                    'static/experiments/alternate/materials/stim1D/B6.JPG',
+
+                    
+                ],
+
+                2: [
+
+                    'static/experiments/alternate/materials/stim2D/A20_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/A20_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/A20_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/A20_7.JPG',
+
+                    'static/experiments/alternate/materials/stim2D/A123_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/A123_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/A123_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/A123_7.JPG',
+
+                    'static/experiments/alternate/materials/stim2D/B71-5_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/B71-5_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/B71-5_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/B71-5_5.JPG',
+
+                    'static/experiments/alternate/materials/stim2D/B174-5_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/B174-5_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/B174-5_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/B174-5_5.JPG',
+
+                ],
+
+                3: [],
+
+
+                
+            }
+
+            labels_train = {
+                1: ['a','a', 'a', 'a', 'a', 'a',
+                    'b', 'b','b', 'b', 'b', 'b',],
+                2: ['a','a', 'a', 'a', 'a', 'a', 'a', 'a',
+                    'b', 'b','b', 'b', 'b', 'b', 'b', 'b',],
+                3: [],
+
+                
+            }
+
+
+        if(subject['condition'] == 1)
+        {
+            train_params = {
+                'objects': stim_train[subject['condition']],
+                'labels': labels_train[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 10,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+                'finish_early': true,
+                'lookback': 12,
+                'finish_early_criterion': 1.0,
+                'min_blocks': 0,
+            }
+            
+        }
+        if(subject['condition'] == 2)
+        {
+            train_params = {
+                'objects': stim_train[subject['condition']],
+                'labels': labels_train[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 10,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+                'finish_early': true,
+                'lookback': 12,
+                'finish_early_criterion': 1.0,
+                'min_blocks': 0,
+            }
+            
+        }
+
+
+
+            
+            stim_test = {
+
+                1: [
+
+                'static/experiments/alternate/materials/stim1D/A1.JPG',
+                    'static/experiments/alternate/materials/stim1D/A2.JPG',
+                    'static/experiments/alternate/materials/stim1D/A3.JPG',
+                    'static/experiments/alternate/materials/stim1D/A4.JPG',
+                    'static/experiments/alternate/materials/stim1D/A5.JPG',
+                    'static/experiments/alternate/materials/stim1D/A6.JPG',
+
+                    'static/experiments/alternate/materials/stim1D/B1.JPG',
+                    'static/experiments/alternate/materials/stim1D/B2.JPG',
+                    'static/experiments/alternate/materials/stim1D/B3.JPG',
+                    'static/experiments/alternate/materials/stim1D/B4.JPG',
+                    'static/experiments/alternate/materials/stim1D/B5.JPG',
+                    'static/experiments/alternate/materials/stim1D/B6.JPG',
+
+                    'static/experiments/alternate/materials/stim1D/T1.JPG',
+                    'static/experiments/alternate/materials/stim1D/T2.JPG',
+                    'static/experiments/alternate/materials/stim1D/T3.JPG',
+                    'static/experiments/alternate/materials/stim1D/T4.JPG',
+                    'static/experiments/alternate/materials/stim1D/T5.JPG',
+                    'static/experiments/alternate/materials/stim1D/T6.JPG',
+                    'static/experiments/alternate/materials/stim1D/T7.JPG',
+                    'static/experiments/alternate/materials/stim1D/T8.JPG',
+                    'static/experiments/alternate/materials/stim1D/T9.JPG',
+
+                    
+
+
+
+
+
+
+
+                    
+                   
+
+                ],
+                2: [
+                    
+
+                    'static/experiments/alternate/materials/stim2D/A20_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/A20_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/A20_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/A20_7.JPG',
+
+                    'static/experiments/alternate/materials/stim2D/A123_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/A123_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/A123_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/A123_7.JPG',
+
+                    'static/experiments/alternate/materials/stim2D/B71-5_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/B71-5_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/B71-5_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/B71-5_5.JPG',
+
+                    'static/experiments/alternate/materials/stim2D/B174-5_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/B174-5_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/B174-5_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/B174-5_5.JPG',
+
+
+                    'static/experiments/alternate/materials/stim2D/T226_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/T226_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/T226_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/T226_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/T226_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/T226_7.JPG',
+
+
+                    'static/experiments/alternate/materials/stim2D/T277-5_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/T277-5_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/T277-5_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/T277-5_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/T277-5_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/T277-5_7.JPG',
+
+
+
+                    'static/experiments/alternate/materials/stim2D/T329_2.JPG',
+                    'static/experiments/alternate/materials/stim2D/T329_3.JPG',
+                    'static/experiments/alternate/materials/stim2D/T329_4.JPG',
+                    'static/experiments/alternate/materials/stim2D/T329_5.JPG',
+                    'static/experiments/alternate/materials/stim2D/T329_6.JPG',
+                    'static/experiments/alternate/materials/stim2D/T329_7.JPG',
+
+                ],
+
+
+                3: [],
+    
+
+            }
+
+            labels_test = {
+                1: ['a','a', 'a', 'a', 'a', 'a',
+                    'b', 'b','b', 'b', 'b', 'b',
+                    't', 't', 't', 't', 't', 't', 't', 't', 't',],
+
+                2: ['a','a', 'a', 'a', 'a', 'a', 'a', 'a',
+                    'b', 'b','b', 'b', 'b', 'b', 'b', 'b',
+                    't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't', 't',],
+
+
+                3: []
+        
+            }
+
+            test_params = {
+                'objects': stim_test[subject['condition']],
+                'labels': labels_test[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 1,
+                'results': subject['results']['testPhase'],
+                'feedback': false,
+            }
+
+
+            
+
+
+
+            
+
+        if ((subject['condition'] == 1) || (subject['condition']==2)) {
+            /** - - - Run Experiment via an Event Object - - - **/
+            eventGraph = {
+                instructions: function () {
+                    instructions.start(
+                        {text: 'On the planet Cellenon, scientists are searching for two important trace elements in the soil. They use a detection device that helps identify the elements in soil samples. When the device is used to analyze a sample, it produces two kinds of information: the size of the circle that appears in the readout and the direction of an indicator pointing outward from the center of the circle. Based on the information from the readout it is possible to tell which of the two trace elements is present in a particular sample.<br><br><br>You will be shown readouts from the detection device, and your job is to decide which element is present in the sample: Element Alpha or Element Beta. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. It may not be easy, but before long you should develop a good sense of how to use the device to detect the elements. After you complete your training, you will be asked to apply your knowledge to a set of readouts from samples that have not yet been classified.<br><br>Good luck!'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready()
+                        }, 100)}
+                    )
+                },
+
+                ready: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training()
+                        }, 100)}
+                    )
+                },
+
+                training: function () {
+                    classification.start(
+                        train_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions2()
+                        },500)}
+                    )
+                },
+
+                instructions2: function () {
+                    instructions.start(
+                        {text: 'Now it is time to move to the next phase: You will be asked to use your knowledge to decide which element is present based on readouts from the element detection device. Some of the readouts will look like those in the training phase, but some will be completely new. Since these are readouts from unclassified samples, there will not be corrective feedback as you had in training.'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready2()
+                        }, 100)}
+                    )
+                },
+
+                ready2: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.test()
+                        }, 100)}
+                    )
+                },
+
+                test: function () {
+                    classification.start(
+                        test_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions3()
+                        },500)}
+                    )
+                },
+
+
+                instructions3: function () {
+                    instructions.start(
+                        {text: 'You have finished that portion of the experiment. Press next to move on to the next part.'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready3()
+                        }, 100)}
+                    )
+                },
+
+                ready3: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.dragAndDrop()
+                        }, 100)}
+                    )
+                },
+
+
+                dragAndDrop: function () {
+                    dragAndDrop.start(
+                        {'results': subject['results']['dragAndDrop']}, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+               
+                end: function () {
+                    instructions.start({text: 'All Finished!'}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions()
+        }
+
+        if (subject['condition'] == 3) {
+            /** - - - Run Experiment via an Event Object - - - **/
+            eventGraph = {
+                instructions: function () {
+                    instructions.start(
+                        {text: 'Welcome to the experiment; glad you could join. Press next to begin'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready()
+                        }, 100)}
+                    )
+                },
+
+                ready: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.dragAndDrop()
+                        }, 100)}
+                    )
+                },
+
+
+                dragAndDrop: function () {
+                    dragAndDrop.start(
+                        {'results': subject['results']['dragAndDrop']}, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+               
+                end: function () {
+                    instructions.start({text: 'All Finished!'}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions()
+        }
+
+
+        </script>
+
+    </body>
+</html>

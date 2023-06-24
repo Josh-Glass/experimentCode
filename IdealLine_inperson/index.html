@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+
+    <body style = 'background: rgb(208, 213, 219);'>
+        <form>
+            <label for="subject_id">subject id:</label><br>
+            <input type="text" id="subject_id" name="subject_id"><br>
+
+            <label for="condition">condition:</label><br>
+
+            <select id="condition" name="subject_condition">
+            
+                <!-- IF YOU WANT TO ADD/REMOVE CONDITIONS!! this is where you do it. just copy/past a new option tag -->
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+
+
+
+
+            </select>
+
+            <br><br>
+
+        </form>
+        <button type="button" onClick="start_exp()">Start</button>
+
+
+        <script type="text/javascript">
+            // window.location.href = 'exp.html'
+
+            document.addEventListener('keyup', function(e){
+                const {ipcRenderer} = require('electron')
+                if (e.key === 'Escape') { ipcRenderer.send('close-me') }
+            })
+
+            function start_exp() {
+                localStorage.setItem("subject_id", document.getElementById('subject_id').value)
+                localStorage.setItem("condition", document.getElementById('condition').value)
+
+                window.location.href = 'exp.html'
+            }
+
+        </script>
+
+    </body>
+
+</html>

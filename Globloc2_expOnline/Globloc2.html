@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- imports -->
+        <script src="static/utils.js"></script>
+        <script src='static/Globloc2/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/Globloc2/instructions.js'></script>
+        <script src='static/Globloc2/ready.js'></script>
+        <script src='static/Globloc2/classification.js'></script>
+        <script src='static/Globloc2/sort.js'></script>
+        <script src='static/Globloc2/typicality.js'></script>
+        <script src='static/Globloc2/study.js'></script>
+        <!-- ^ these are all the experiment phases we commonly use in the kurtz lab -->
+        <!-- <link href="static/testExp/materials/styles.css" rel="stylesheet" type="text/css"></link> -->
+
+    </head>
+    
+    <!-- <body style = 'margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;'> -->
+    <body style = 'background: rgb(255, 255, 255);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; } // <-- use this to warn users if they accidently hit the back button and delete all their data (its gunna save a lot of headaches)
+
+            expId = 'Globloc2'
+
+            subject = {
+                id: get_subject_id(),
+                condition: get_condition(),
+                results: {
+                    'trainPhase1': [],
+                    
+                }
+            }
+
+            stim_train1 = {
+
+                1: [
+                    'static/Globloc2/materials/condition1/redA1.png',
+                    'static/Globloc2/materials/condition1/redA2.png',
+                    'static/Globloc2/materials/condition1/redA3.png',
+                    'static/Globloc2/materials/condition1/redA4.png',
+                    'static/Globloc2/materials/condition1/redA5.png',
+                    'static/Globloc2/materials/condition1/redA6.png',
+
+                    'static/Globloc2/materials/condition1/blueB1.png',
+                    'static/Globloc2/materials/condition1/blueB2.png',
+                    'static/Globloc2/materials/condition1/blueB3.png',
+                    'static/Globloc2/materials/condition1/blueB4.png',
+                    'static/Globloc2/materials/condition1/blueB5.png',
+                    'static/Globloc2/materials/condition1/blueB6.png',
+                    
+                ],
+
+                2: [
+                    'static/Globloc2/materials/condition2/redA1.png',
+                    'static/Globloc2/materials/condition2/redA2.png',
+                    'static/Globloc2/materials/condition2/redA3.png',
+                    'static/Globloc2/materials/condition2/redA4.png',
+                    'static/Globloc2/materials/condition2/redA5.png',
+                    'static/Globloc2/materials/condition2/redA6.png',
+
+                    'static/Globloc2/materials/condition2/blueB1.png',
+                    'static/Globloc2/materials/condition2/blueB2.png',
+                    'static/Globloc2/materials/condition2/blueB3.png',
+                    'static/Globloc2/materials/condition2/blueB4.png',
+                    'static/Globloc2/materials/condition2/blueB5.png',
+                    'static/Globloc2/materials/condition2/blueB6.png',
+                ],
+            }
+
+            labels_train1 = {
+                1: ['a','a', 'a', 'a', 'a', 'a', 'na', 'na', 'na', 'na' , 'na', 'na'],
+                2: ['a', 'a', 'a', 'a' , 'a', 'a', 'b','b', 'b', 'b', 'b', 'b'],
+            }
+
+            categories = {
+                1: ['a','na'],
+                2: ['a','b'],
+            }
+
+            btn_labels = {
+                1: ['Alpha','Not an Alpha'],
+                2: ['Alpha','Beta'],
+            }
+
+
+
+            train1_params = {
+                'objects': stim_train1[subject['condition']],
+                'labels': labels_train1[subject['condition']],
+                'categories': ['a', 'b', 'na'],
+                'btnLabels': {'a' : 'alpha', 'b': 'beta', 'na': 'Not an alpha'},
+                'n_blocks': 2,
+                'results': subject['results']['trainPhase1'],
+                'feedback': true,
+            }
+
+           
+
+
+            /** - - - Run Experiment via an Event Object - - - **/
+            eventGraph = {
+                instructions: function () {
+                    instructions.start(
+                        {text: 'Welcome to the experiment; glad you could join. These are the insructions rendered in <b>HTML</b> format; so, all the <i>HTML</i> tags youd normally use affect the text here. <br><br> click next to continue...'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready()
+                        }, 100)}
+                    )
+                },
+
+                ready: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training1()
+                        }, 100)}
+                    )
+                },
+
+                training1: function () {
+                    classification.start(
+                        train1_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+
+                end: function () {
+                    instructions.start({text: 'All Finished!'}, function () {
+                        viewData(JSON.stringify(subject['results']), 'Downloads/test.txt', 'text/plain') // <-- spits out the data if you want to look at it; this is whats going to get sent to the server
+                        next(expId, subject['id'], subject['condition'], subject) // <-- send data to server and start next experiment | this comes from the "utils.js" script
+                    })
+                },
+            }
+
+            // initialize first event
+            eventGraph.instructions()
+
+
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- imports -->
+        
+        <!-- webrunner dependency -->
+        <script src='static/utils.js'></script>
+
+        <script src='static/experiments/partX/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/experiments/partX/instructions.js'></script>
+        <script src='static/experiments/partX/ready.js'></script>
+        <script src='static/experiments/partX/classification.js'></script>
+        <script src='static/experiments/partX/sort.js'></script>
+        <script src='static/experiments/partX/typicality.js'></script>
+        <script src='static/experiments/partX/study.js'></script>
+        <!-- ^ these are all the experiment phases we commonly use in the kurtz lab -->
+        <!-- <link href="static/testExp/materials/styles.css" rel="stylesheet" type="text/css"></link> -->
+
+        <style>
+            #instructions{
+
+                margin-left: 40px;
+                margin-right: 40px;
+
+            }
+        </style>
+
+    </head>
+    
+    <!-- <body style = 'margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;'> -->
+    <body style = 'background: rgb(255, 255, 255);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; } // <-- use this to warn users if they accidently hit the back button and delete all their data (its gunna save a lot of headaches)
+
+            expId = 'partX'
+
+            
+
+            subject = {
+                //id: localStorage.getItem('subject_id'),
+                id: '1',
+                //condition: localStorage.getItem('condition'),
+                 condition: '1',
+                results: {
+                    'trainPhase': [],
+                    'subTestPhase': [],
+                    'testPhase': [],
+                    'typicality': [],
+
+                }
+            }
+
+            stim_train = {
+
+                1: [
+                    'static/experiments/partX/materials/encourage_A/encourage_A0.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A1.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A2.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A3.png',
+
+
+                    'static/experiments/partX/materials/encourage_B/encourage_B0.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B1.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B2.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B3.png',
+
+
+
+
+                    
+                ],
+
+                2: [
+
+                    'static/experiments/partX/materials/discourage_A/discourage_A0.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A1.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A2.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A3.png',
+
+
+                    'static/experiments/partX/materials/discourage_B/discourage_B0.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B1.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B2.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B3.png',
+                ],
+
+                3: [
+
+                    'static/experiments/partX/materials/neutral_A/neutral_A0.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A1.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A2.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A3.png',
+
+
+                    'static/experiments/partX/materials/neutral_B/neutral_B0.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B1.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B2.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B3.png',
+
+                ],
+
+
+                
+            }
+
+            labels_train = {
+                1: ['a','a', 'a', 'a', 'b', 'b', 'b', 'b'],
+                2: ['a','a', 'a', 'a', 'b', 'b', 'b', 'b'],
+                3: ['a','a', 'a', 'a', 'b', 'b', 'b', 'b'],
+
+                
+            }
+
+
+
+            train_params = {
+                'objects': stim_train[subject['condition']],
+                'labels': labels_train[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 12,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+                'finish_early': true,
+                'lookback': 15,
+                'finish_early_criterion': 1.0,
+                'min_blocks': 0,
+            }
+
+            stim_subTest = {
+
+                1: [
+
+                    'static/experiments/partX/materials/encourage_A/encourage_A0.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A1.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A2.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A3.png',
+
+
+                    'static/experiments/partX/materials/encourage_B/encourage_B0.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B1.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B2.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B3.png',
+
+                    'static/experiments/partX/materials/encourage_X/encourage_X0.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X1.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X2.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X3.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X4.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X5.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X6.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X7.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X8.png',
+
+                ],
+
+
+                2: [
+
+                    'static/experiments/partX/materials/discourage_A/discourage_A0.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A1.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A2.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A3.png',
+
+
+                    'static/experiments/partX/materials/discourage_B/discourage_B0.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B1.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B2.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B3.png',
+
+                    'static/experiments/partX/materials/discourage_X/discourage_X0.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X1.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X2.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X3.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X4.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X5.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X6.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X7.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X8.png',
+
+
+                ],
+
+
+                3: [
+
+                    'static/experiments/partX/materials/neutral_A/neutral_A0.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A1.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A2.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A3.png',
+
+
+                    'static/experiments/partX/materials/neutral_B/neutral_B0.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B1.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B2.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B3.png',
+
+
+                    'static/experiments/partX/materials/neutral_X/neutral_X0.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X1.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X2.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X3.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X4.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X5.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X6.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X7.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X8.png',
+
+                    ],
+              
+            }
+
+
+
+            labels_subTest = {
+                1: ['a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'x','x','x','x','x','x','x','x','x',
+
+
+
+                ],
+
+                2: [
+
+                    'a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'x','x','x','x','x','x','x','x','x',
+                
+                ],
+
+                3: [
+
+                    'a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'x','x','x','x','x','x','x','x','x',
+                
+                ]
+
+        
+            }
+
+            subTest_params = {
+                'objects': stim_subTest[subject['condition']],
+                'labels': labels_subTest[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 1,
+                'results': subject['results']['subTestPhase'],
+                'feedback': false,
+            }
+
+
+
+            
+            stim_test = {
+
+                1: [
+
+                    'static/experiments/partX/materials/encourage_A/encourage_A0.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A1.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A2.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A3.png',
+
+
+                    'static/experiments/partX/materials/encourage_B/encourage_B0.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B1.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B2.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B3.png',
+
+                    'static/experiments/partX/materials/encourage_W/encourage_W0.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W1.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W2.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W3.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W4.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W5.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W6.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W7.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W8.png',
+
+                    'static/experiments/partX/materials/encourage_X/encourage_X0.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X1.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X2.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X3.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X4.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X5.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X6.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X7.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X8.png',
+
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y0.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y1.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y2.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y3.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y4.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y5.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y6.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y7.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y8.png',
+
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z0.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z1.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z2.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z3.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z4.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z5.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z6.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z7.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z8.png',
+                   
+
+                ],
+                2: [
+                    
+
+                    'static/experiments/partX/materials/discourage_A/discourage_A0.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A1.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A2.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A3.png',
+
+
+                    'static/experiments/partX/materials/discourage_B/discourage_B0.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B1.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B2.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B3.png',
+
+                    'static/experiments/partX/materials/discourage_W/discourage_W0.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W1.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W2.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W3.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W4.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W5.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W6.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W7.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W8.png',
+
+                    'static/experiments/partX/materials/discourage_X/discourage_X0.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X1.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X2.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X3.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X4.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X5.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X6.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X7.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X8.png',
+
+
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y0.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y1.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y2.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y3.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y4.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y5.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y6.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y7.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y8.png',
+
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z0.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z1.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z2.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z3.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z4.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z5.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z6.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z7.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z8.png',
+                  
+
+                ],
+
+
+                3: [
+
+                    'static/experiments/partX/materials/neutral_A/neutral_A0.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A1.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A2.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A3.png',
+
+
+                    'static/experiments/partX/materials/neutral_B/neutral_B0.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B1.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B2.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B3.png',
+
+
+                    'static/experiments/partX/materials/neutral_W/neutral_W0.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W1.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W2.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W3.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W4.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W5.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W6.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W7.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W8.png',
+
+
+                    'static/experiments/partX/materials/neutral_X/neutral_X0.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X1.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X2.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X3.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X4.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X5.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X6.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X7.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X8.png',
+
+
+                    
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y0.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y1.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y2.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y3.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y4.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y5.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y6.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y7.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y8.png',
+
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z0.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z1.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z2.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z3.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z4.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z5.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z6.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z7.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z8.png',
+
+                    ],
+    
+
+            }
+
+            labels_test = {
+                1: ['a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'w','w','w','w','w','w','w','w','w',
+                     'x','x','x','x','x','x','x','x','x',
+                     'y','y','y','y','y','y','y','y','y',
+                     'z','z','z','z','z','z','z','z','z',
+
+
+
+                ],
+
+                2: [
+
+                     'a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'w','w','w','w','w','w','w','w','w',
+                     'x','x','x','x','x','x','x','x','x',
+                     'y','y','y','y','y','y','y','y','y',
+                     'z','z','z','z','z','z','z','z','z',
+                
+                ],
+
+
+                3: [
+
+                    'a', 'a', 'a', 'a',
+                    'b', 'b', 'b', 'b',
+                    'w','w','w','w','w','w','w','w','w',
+                    'x','x','x','x','x','x','x','x','x',
+                    'y','y','y','y','y','y','y','y','y',
+                    'z','z','z','z','z','z','z','z','z',
+
+                ]
+        
+            }
+
+            test_params = {
+                'objects': stim_test[subject['condition']],
+                'labels': labels_test[subject['condition']],
+                'categories': ['a', 'b'],
+                'btnLabels': {'a': 'Alpha', 'b': 'Beta'},
+                'n_blocks': 1,
+                'results': subject['results']['testPhase'],
+                'feedback': false,
+            }
+
+
+            stim_typ = {
+
+                        1: [
+
+
+                    'static/experiments/partX/materials/encourage_A/encourage_A0.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A1.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A2.png',
+                    'static/experiments/partX/materials/encourage_A/encourage_A3.png',
+
+
+                    'static/experiments/partX/materials/encourage_B/encourage_B0.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B1.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B2.png',
+                    'static/experiments/partX/materials/encourage_B/encourage_B3.png',
+
+                    'static/experiments/partX/materials/encourage_W/encourage_W1.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W3.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W4.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W5.png',
+                    'static/experiments/partX/materials/encourage_W/encourage_W7.png',
+
+                    'static/experiments/partX/materials/encourage_X/encourage_X1.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X3.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X4.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X5.png',
+                    'static/experiments/partX/materials/encourage_X/encourage_X7.png',
+
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y1.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y3.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y4.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y5.png',
+                    'static/experiments/partX/materials/encourage_Y/encourage_Y7.png',
+
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z1.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z3.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z4.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z5.png',
+                    'static/experiments/partX/materials/encourage_Z/encourage_Z7.png',
+                ],
+
+                2: [
+
+                    'static/experiments/partX/materials/discourage_A/discourage_A0.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A1.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A2.png',
+                    'static/experiments/partX/materials/discourage_A/discourage_A3.png',
+
+
+                    'static/experiments/partX/materials/discourage_B/discourage_B0.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B1.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B2.png',
+                    'static/experiments/partX/materials/discourage_B/discourage_B3.png',
+
+                    'static/experiments/partX/materials/discourage_W/discourage_W1.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W3.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W4.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W5.png',
+                    'static/experiments/partX/materials/discourage_W/discourage_W7.png',
+
+                    'static/experiments/partX/materials/discourage_X/discourage_X1.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X3.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X4.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X5.png',
+                    'static/experiments/partX/materials/discourage_X/discourage_X7.png',
+
+
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y1.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y3.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y4.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y5.png',
+                    'static/experiments/partX/materials/discourage_Y/discourage_Y7.png',
+
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z1.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z3.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z4.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z5.png',
+                    'static/experiments/partX/materials/discourage_Z/discourage_Z7.png',
+
+
+                    ],
+
+                    3: ['static/experiments/partX/materials/neutral_A/neutral_A0.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A1.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A2.png',
+                    'static/experiments/partX/materials/neutral_A/neutral_A3.png',
+
+
+                    'static/experiments/partX/materials/neutral_B/neutral_B0.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B1.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B2.png',
+                    'static/experiments/partX/materials/neutral_B/neutral_B3.png',
+
+
+                    'static/experiments/partX/materials/neutral_W/neutral_W1.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W3.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W4.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W5.png',
+                    'static/experiments/partX/materials/neutral_W/neutral_W7.png',
+
+
+                    'static/experiments/partX/materials/neutral_X/neutral_X1.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X3.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X4.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X5.png',
+                    'static/experiments/partX/materials/neutral_X/neutral_X7.png',
+
+
+                    
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y1.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y3.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y4.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y5.png',
+                    'static/experiments/partX/materials/neutral_Y/neutral_Y7.png',
+
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z1.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z3.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z4.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z5.png',
+                    'static/experiments/partX/materials/neutral_Z/neutral_Z7.png',
+                ],
+
+
+            }
+
+            labels_typ = {
+                1: ['a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'w','w','w','w','w',
+                     'x','x','x','x','x',
+                     'y','y','y','y','y',
+                     'z','z','z','z','z',
+
+
+
+                ],
+
+                2: [
+
+                     'a', 'a', 'a', 'a',
+                     'b', 'b', 'b', 'b',
+                     'w','w','w','w','w',
+                     'x','x','x','x','x',
+                     'y','y','y','y','y',
+                     'z','z','z','z','z',
+                
+                ],
+
+
+                3: [
+
+                    'a', 'a', 'a', 'a',
+                    'b', 'b', 'b', 'b',
+                    'w','w','w','w','w',
+                    'x','x','x','x','x',
+                    'y','y','y','y','y',
+                    'z','z','z','z','z',
+
+                ],
+        
+            }
+
+
+            typicality_params = {
+                'objects': stim_typ[subject['condition']],
+                'labels': labels_typ[subject['condition']],
+                'n_blocks': 1,
+                'results': subject['results']['typicality'],
+                'sliderBins': 13,
+                'binLabels': ['A7','A6','A5','A4','A3','A2','A1','B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']
+            }
+
+            
+
+        if ((subject['condition'] == 1) || (subject['condition']==2)) {
+            /** - - - Run Experiment via an Event Object - - - **/
+            eventGraph = {
+                instructions: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Welcome to the experiment; glad you could join.</div><br><br><div style="text-align: justify;">You will be shown a set of examples from a domain of geometric shapes. Each example will belong to one of two types:  Alphas and Betas. Your task is to learn how to tell whether a shape is an Alpha or a Beta. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. It may not be easy, but before long you should develop a good sense of how to decide what type of shape is presented. After you complete your training, you will be asked to apply your knowledge to a set of shapes that includes ones that have not been classified.<div><br><br> <div style="text-align: center;">Good luck!<div></font> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready()
+                        }, 100)}
+                    )
+                },
+
+                ready: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training()
+                        }, 100)}
+                    )
+                },
+
+                training: function () {
+                    classification.start(
+                        train_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions2()
+                        },500)}
+                    )
+                },
+
+                instructions2: function () {
+                    instructions.start(
+                        {text: '<font size="+3"><div style="text-align: justify;">Now it is time to move to the next phase: You will be asked to use your knowledge to decide which type of geometric shape is being presented. Some of the geometric shapes will be exactly the same as those in the training phase, but some will be completely new. Since some unclassified geometric shapes will be included in this phase, there will not be corrective feedback as you had in training.<div></font>'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready2()
+                        }, 100)}
+                    )
+                },
+
+                ready2: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.subTest()
+                        }, 100)}
+                    )
+                },
+
+                subTest: function () {
+                    classification.start(
+                        subTest_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.test()
+                        },500)}
+                    )
+                },
+
+                test: function () {
+                    classification.start(
+                        test_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.typicality()
+                        },500)}
+                    )
+                },
+
+                typicality: function () {
+                    typicality.start(
+                        typicality_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+               
+                end: function () {
+                    instructions.start({text: 'All Finished!'}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions()
+        }
+
+        if (subject['condition'] == 3) {
+            /** - - - Run Experiment via an Event Object - - - **/
+            eventGraph = {
+                instructions: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Welcome to the experiment; glad you could join.</div><br><br><div style="text-align: justify;">You will be shown a set of examples from a domain of geometric shapes. Each example will belong to one of two types:  Alphas and Betas. Your task is to learn how to tell whether a shape is an Alpha or a Beta. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. It may not be easy, but before long you should develop a good sense of how to decide what type of shape is presented. After you complete your training, you will be asked to apply your knowledge to a set of shapes that includes ones that have not been classified.<div><br><br> <div style="text-align: center;">Good luck!<div></font> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready()
+                        }, 100)}
+                    )
+                },
+
+                ready: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training()
+                        }, 100)}
+                    )
+                },
+
+                training: function () {
+                    classification.start(
+                        train_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions2()
+                        },500)}
+                    )
+                },
+
+                instructions2: function () {
+                    instructions.start(
+                        {text: '<font size="+3"><div style="text-align: justify;">Now it is time to move to the next phase: You will be asked to use your knowledge to decide which type of geometric shape is being presented. Some of the geometric shapes will be exactly the same as those in the training phase, but some will be completely new. Since some unclassified geometric shapes will be included in this phase, there will not be corrective feedback as you had in training.<div></font>'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.ready2()
+                        }, 100)}
+                    )
+                },
+
+                ready2: function () {
+                    ready.start(
+                        {previous_event: eventGraph.instructions}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.subTest()
+                        }, 100)}
+                    )
+                },
+
+                subTest: function () {
+                    classification.start(
+                        subTest_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.test()
+                        },500)}
+                    )
+                },
+
+                test: function () {
+                    classification.start(
+                        test_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+
+               
+                end: function () {
+                    instructions.start({text: 'All Finished!'}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions()
+        }
+
+
+        </script>
+
+    </body>
+</html>

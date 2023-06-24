@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- imports -->
+        
+        <!-- webrunner dependency -->
+        <script src='static/utils.js'></script>
+
+        <script src='static/experiments/line/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/experiments/line/instructions.js'></script>
+        <script src='static/experiments/line/ready.js'></script>
+        <script src='static/experiments/line/classification.js'></script>
+        <script src='static/experiments/line/sort.js'></script>
+        <script src='static/experiments/line/typicality.js'></script>
+        <script src='static/experiments/line/study.js'></script>
+        <script src='static/experiments/line/similarity.js'></script>
+
+        <!-- ^ these are all the experiment phases we commonly use in the kurtz lab -->
+        <!-- <link href="static/testExp/materials/styles.css" rel="stylesheet" type="text/css"></link> -->
+
+        <style>
+            #instructions{
+
+                margin-left: 40px;
+                margin-right: 40px;
+
+            }
+        </style>
+
+    </head>
+    
+    <!-- <body style = 'margin-bottom: 0px; margin-top: 0px; margin-left: 0px; margin-right: 0px;'> -->
+    <body style = 'background: rgb(255, 255, 255);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; } // <-- use this to warn users if they accidently hit the back button and delete all their data (its gunna save a lot of headaches)
+
+            expId = 'line'
+
+            
+
+            subject = {
+                //id: localStorage.getItem('subject_id'),
+                id: '1',
+                //condition: localStorage.getItem('condition'),
+                condition: '3',
+                results: {
+                    'study': [],
+                    'typicality1': [],
+                    'trainPhase': [],
+                    'typicality2': [],
+                    'similarity': [],
+                    'testPhase' : [],
+
+                }
+            }
+
+
+
+
+            //SIMILARITY PHASE  THIS CAN BE USED FOR BOTH INITIAL SIM AND POST SIM
+            stim_sim1 = {
+
+                1: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+                    
+                ],
+
+                2: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+                3: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+            }
+
+            labels_sim1 = {
+                1: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                2: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                3: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                
+            }
+
+
+            sim_params = {
+                'objects': stim_sim1[subject['condition']],
+                'labels': labels_sim1[subject['condition']],
+                'n_blocks': 14,
+                'results': subject['results']['similarity'],
+                'sliderBins': 6,
+                'binLabels': ['1','2','3','4','5','6','7',]
+            }
+
+            
+
+
+
+
+
+
+            //OBSERVATIONAL STUDY PHASE
+            stim_study = {
+
+                1: [
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                    
+                ],
+
+                2: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                ],
+                
+            }
+
+            labels_study = {
+                1: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha'],
+                2: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha'],
+                
+            }
+
+
+
+            C1study_params = {
+                'objects': stim_study[subject['condition']],
+                'labels': labels_study[subject['condition']],
+                'categories': ['a'],
+                'btnLabels': {'a': 'Alpha'},
+                'n_blocks': 5,
+                'results': subject['results']['study'],
+                'feedback': false,
+                
+            }
+
+
+            C2study_params = {
+                'objects': stim_study[subject['condition']],
+                'labels': labels_study[subject['condition']],
+                'categories': ['a'],
+                'btnLabels': {'a': 'Alpha'},
+                'n_blocks': 5,
+                'results': subject['results']['study'],
+                'feedback': false,
+                
+            }
+
+
+          
+
+
+            
+
+
+
+            
+
+           
+
+            //INITIAL TYPICALITY PHASE
+            stim_typ1 = {
+
+                1: [
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                    
+                ],
+
+                2: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                ],
+
+            }
+
+            labels_typ1 = {
+                1: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha'],
+                2: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha'],
+        
+            }
+
+
+            typicality_params1 = {
+                'objects': stim_typ1[subject['condition']],
+                'labels': labels_typ1[subject['condition']],
+                'n_blocks': 1,
+                'results': subject['results']['typicality1'],
+                'sliderBins': 6,
+                'binLabels': ['1','2','3','4','5','6','7',]
+            }
+
+
+
+            //CLASSIFICATION TRAINING PHASE
+
+            stim_train = {
+
+                1: [
+
+                
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+                2: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+                3: [
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+                ],
+            }
+
+
+
+            labels_train = {
+                1: ['Beta', 'Beta', 'Beta', 'Beta','Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                2: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta','Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                3: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta','Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                
+            }
+
+
+            C1train_params = {
+                'objects': stim_train[subject['condition']],
+                'labels': labels_train[subject['condition']],
+                'categories': ['Beta', 'Gamma'],
+                'btnLabels': {'Beta': 'Beta', 'Gamma': 'Gamma'},
+                'n_blocks': 5,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+                'finish_early': false,
+                //'lookback': 15,
+                //'finish_early_criterion': 1.0,
+                //'min_blocks': 0,
+            }
+
+            C2train_params = {
+                'objects': stim_train[subject['condition']],
+                'labels': labels_train[subject['condition']],
+                'categories': ['Alpha', 'Beta', 'Gamma'],
+                'btnLabels': {'Alpha': 'Alpha', 'Beta': 'Beta', 'Gamma': 'Gamma'},
+                'n_blocks': 5,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+                'finish_early': false,
+                //'lookback': 15,
+                //'finish_early_criterion': 1.0,
+                //'min_blocks': 0,
+            }
+
+            C3train_params = {
+                'objects': stim_train[subject['condition']],
+                'labels': labels_train[subject['condition']],
+                'categories': ['Alpha', 'Beta', 'Gamma'],
+                'btnLabels': {'Alpha': 'Alpha', 'Beta': 'Beta', 'Gamma': 'Gamma'},
+                'n_blocks': 5,
+                'results': subject['results']['trainPhase'],
+                'feedback': true,
+                'finish_early': false,
+                //'lookback': 15,
+                //'finish_early_criterion': 1.0,
+                //'min_blocks': 0,,
+            }
+
+
+
+            //SECOND TYPICALITY PHASE
+            stim_typ2 = {
+
+                1: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+                    
+                ],
+
+                2: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+              
+                3: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+            }
+
+            labels_typ2 = {
+                1: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                2: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                3: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                
+            }
+
+
+            typicality_params2 = {
+                'objects': stim_typ2[subject['condition']],
+                'labels': labels_typ2[subject['condition']],
+                'n_blocks': 1,
+                'results': subject['results']['typicality2'],
+                'sliderBins': 6,
+                'binLabels': ['1','2','3','4','5','6','7',]
+            }
+    
+
+            //NO-FEEDBACK TEST PHASE
+
+            stim_test = {
+
+                1: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/T500.png',
+
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                'static/experiments/line/materials/T1000.png',
+
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+                2: [
+
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/T500.png',
+
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                'static/experiments/line/materials/T1000.png',
+
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+
+                ],
+
+                3: [
+                'static/experiments/line/materials/A50.png',
+                'static/experiments/line/materials/A150.png',
+                'static/experiments/line/materials/A250.png',
+                'static/experiments/line/materials/A350.png',
+                'static/experiments/line/materials/A450.png',
+
+                'static/experiments/line/materials/T500.png',
+
+
+                'static/experiments/line/materials/B550.png',
+                'static/experiments/line/materials/B650.png',
+                'static/experiments/line/materials/B750.png',
+                'static/experiments/line/materials/B850.png',
+                'static/experiments/line/materials/B950.png',
+
+                'static/experiments/line/materials/T1000.png',
+
+
+                "static/experiments/line/materials/C1050.png",
+                "static/experiments/line/materials/C1150.png",
+                "static/experiments/line/materials/C1250.png",
+                "static/experiments/line/materials/C1350.png",
+                "static/experiments/line/materials/C1450.png",
+                ],
+            }
+
+
+
+            labels_test = {
+                1: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha','test', 'Beta', 'Beta', 'Beta', 'Beta',' Beta', 'test','Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                2: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha', 'test','Beta', 'Beta', 'Beta', 'Beta',' Beta','test', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                3: ['Alpha','Alpha', 'Alpha', 'Alpha', 'Alpha','test', 'Beta', 'Beta', 'Beta', 'Beta',' Beta','test', 'Gamma', 'Gamma', 'Gamma', 'Gamma', 'Gamma'],
+                
+            }
+
+            test_params = {
+                'objects': stim_test[subject['condition']],
+                'labels': labels_test[subject['condition']],
+                'categories': ['Alpha', 'Beta', 'Gamma'],
+                'btnLabels': {'Alpha': 'Alpha', 'Beta': 'Beta', 'Gamma': 'Gamma'},
+                'n_blocks': 1,
+                'results': subject['results']['testPhase'],
+                'feedback': false,
+                
+            }
+
+        
+            /** - - - Run Experiment via an Event Object - - - **/
+
+            /*** CONDITION 1 Blcoked A, TACL with 2 remaining cats***/
+            if (subject['condition'] == 1) {
+            eventGraph = {
+
+
+                instructions2: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Welcome to the experiment (glad you can participate)!<br><br>In the first portion of the experiment, you will learn about a simple category consisting of lines of different lengths. You will be shown examples of lines from a certain category. Your goal is to study each example shown in order to develop a good understanding of the category.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.study()
+                        }, 100)}
+                    )
+                },
+
+               
+
+                study: function () {
+                    study.start(
+                        C1study_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instrTyp1()
+                        },500)}
+                    )
+                },
+
+                instrTyp1: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">In the next phase of the experiment, you will be asked to judge how well the item represents its category. You are not judging how frequent or familiar the example is and you are not judging how confident you are that it belongs to the category. An object that is highly typical is one that represents the category very well.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.typicality1()
+                        }, 100)}
+                    )
+                },
+
+                typicality1: function () {
+                    typicality.start(
+                        typicality_params1, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions3()
+                        },500)}
+                    )
+                },
+
+
+                instructions3: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Next you will be learning about a set of categories all at once. Once again, you will be shown examples from the domain of lines, but this time your job is to learn how to classify them into the category options that are available. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. Before long you will know how to decide which type of line is presented.<br><br><br>Good Luck!</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training()
+                        }, 100)}
+                    )
+                },
+
+                
+
+                training: function () {
+                    classification.start(
+                        C1train_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instrTyp2()
+                        },500)}
+                    )
+                },
+
+
+                instrTyp2: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Now, once again, you will be asked to judge how well the item represents its category. You are not judging how frequent or familiar the example is and you are not judging how confident you are that it belongs to the category. An object that is highly typical is one that represents the category very well.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.typicality2()
+                        }, 100)}
+                    )
+                },
+
+                typicality2: function () {
+                    typicality.start(
+                        typicality_params2, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions4()
+                        },500)}
+                    )
+                },
+
+                instructions4: function () {
+                    instructions.start(
+                        {text: '<font size="+3"><div style="text-align: justify;">In this next phase, you will be asked to use the category knowledge you have gained to decide which type of line is being presented. Some of the lines will be exactly the same as those in the training phase, but some will be completely new. There will not be corrective feedback like you had earlier in training.<div></font>'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.test()
+                        }, 100)}
+                    )
+                },
+
+
+                test: function () {
+                    classification.start(
+                        test_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions5()
+                        },500)}
+                    )
+                },
+
+                instructions5: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">In this next phase, you will be asked to rate how similar you think two lines are on a scale from “Extremely Dissimilar” to “Extremely Similar”. </div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.similarity()
+                        }, 100)}
+                    )
+                },
+
+                
+
+                similarity: function () {
+                    similarity.start(
+                        sim_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+               
+                end: function () {
+                    instructions.start({text: 'All Finished! Please Press "Next" '}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions2()
+        }
+
+
+
+
+
+        
+            /*** CONDITION 2 Blcoked A, TACL with 3 remaining cats***/
+            if (subject['condition'] == 2) {
+
+
+                eventGraph = {
+                
+
+                    instructions2: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Welcome to the experiment (glad you can participate)!<br><br>In the first portion of the experiment, you will learn about a simple category consisting of lines of different lengths. You will be shown examples of lines from a certain category. Your goal is to study each example shown in order to develop a good understanding of the category.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.study()
+                        }, 100)}
+                    )
+                },
+
+                study: function () {
+                    study.start(
+                        C2study_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instrTyp1()
+                        },500)}
+                    )
+                },
+
+                instrTyp1: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">In the next phase of the experiment, you will be asked to judge how well the item represents its category. You are not judging how frequent or familiar the example is and you are not judging how confident you are that it belongs to the category. An object that is highly typical is one that represents the category very well.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.typicality1()
+                        }, 100)}
+                    )
+                },
+
+                typicality1: function () {
+                    typicality.start(
+                        typicality_params1, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions3()
+                        },500)}
+                    )
+                },
+
+
+                instructions3: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Next you will be learning about a set of categories all at once. Once again, you will be shown examples from the domain of lines, but this time your job is to learn how to classify them into the category options that are available. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. Before long you will know how to decide which type of line is presented.<br><br><br>Good Luck!</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training()
+                        }, 100)}
+                    )
+                },
+
+                
+
+                training: function () {
+                    classification.start(
+                        C2train_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instrTyp2()
+                        },500)}
+                    )
+                },
+
+                instrTyp2: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Now, once again, you will be asked to judge how well the item represents its category. You are not judging how frequent or familiar the example is and you are not judging how confident you are that it belongs to the category. An object that is highly typical is one that represents the category very well.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.typicality2()
+                        }, 100)}
+                    )
+                },
+
+                typicality2: function () {
+                    typicality.start(
+                        typicality_params2, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions4()
+                        },500)}
+                    )
+                },
+
+                
+
+                instructions4: function () {
+                    instructions.start(
+                        {text: '<font size="+3"><div style="text-align: justify;">In this next phase, you will be asked to use the category knowledge you have gained to decide which type of line is being presented. Some of the lines will be exactly the same as those in the training phase, but some will be completely new. There will not be corrective feedback like you had earlier in training.<div></font>'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.test()
+                        }, 100)}
+                    )
+                },
+
+
+                test: function () {
+                    classification.start(
+                        test_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions5()
+                        },500)}
+                    )
+                },
+
+                instructions5: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">In this next phase, you will be asked to rate how similar you think two lines are on a scale from “Extremely Dissimilar” to “Extremely Similar”. </div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.similarity()
+                        }, 100)}
+                    )
+                },
+
+                
+
+                similarity: function () {
+                    similarity.start(
+                        sim_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+               
+                end: function () {
+                    instructions.start({text: 'All Finished! Please Press "Next" '}, function () {
+                        save(subject)
+                    })
+                },
+            }
+            
+
+            // initialize first event
+            eventGraph.instructions2()
+            
+        }
+
+
+
+
+        /*** CONTROL NO BLOCKING***/
+        if (subject['condition'] == 3) {
+
+
+                    eventGraph = {
+
+
+   
+                    instructions3: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Welcome to the experiment (glad you can participate)!<br><br>You will be learning about a set of categories all at once. Once again, you will be shown examples from the domain of lines, but this time your job is to learn how to classify them into the category options that are available. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. Before long you will know how to decide which type of line is presented.<br><br><br>Good Luck!</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.training()
+                        }, 100)}
+                    )
+                },
+
+
+                    training: function () {
+                        classification.start(
+                            C3train_params, // params
+                            function () { setTimeout( function () { // what to do next
+                                eventGraph.instrTyp2()
+                            },500)}
+                        )
+                    },
+
+                    instrTyp2: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">Now you will be asked to judge how well the item represents its category. You are not judging how frequent or familiar the example is and you are not judging how confident you are that it belongs to the category. An object that is highly typical is one that represents the category very well.</div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.typicality2()
+                        }, 100)}
+                    )
+                },
+
+                    typicality2: function () {
+                        typicality.start(
+                            typicality_params2, // params
+                            function () { setTimeout( function () { // what to do next
+                                eventGraph.instructions4()
+                            },500)}
+                        )
+                    },
+
+                    instructions4: function () {
+                    instructions.start(
+                        {text: '<font size="+3"><div style="text-align: justify;">In this next phase, you will be asked to use the category knowledge you have gained to decide which type of line is being presented. Some of the lines will be exactly the same as those in the training phase, but some will be completely new. There will not be corrective feedback like you had earlier in training.<div></font>'}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.test()
+                        }, 100)}
+                    )
+                },
+
+
+                test: function () {
+                    classification.start(
+                        test_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.instructions5()
+                        },500)}
+                    )
+                },
+
+                instructions5: function () {
+                    instructions.start(
+                        {text: '<font size="+3" margin = 20px><div style="text-align: center;">In this next phase, you will be asked to rate how similar you think two lines are on a scale from “Extremely Dissimilar” to “Extremely Similar”. </div> '}, // params
+                        function () { setTimeout(function () { // what to do next
+                            eventGraph.similarity()
+                        }, 100)}
+                    )
+                },
+
+                
+
+                similarity: function () {
+                    similarity.start(
+                        sim_params, // params
+                        function () { setTimeout( function () { // what to do next
+                            eventGraph.end()
+                        },500)}
+                    )
+                },
+
+
+                    end: function () {
+                        instructions.start({text: 'All Finished! Please Press "Next" '}, function () {
+                            save(subject)
+                        })
+                    },
+                    }
+
+
+                    // initialize first event
+                    eventGraph.instructions3()
+
+                    }
+
+        </script>
+
+    </body>
+</html>

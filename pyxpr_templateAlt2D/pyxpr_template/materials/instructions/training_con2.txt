@@ -1,0 +1,7 @@
+You will be shown several examples of flowers. These flowers belong to two subspecies: the Alpha subspecies and the Beta subspecies.
+
+Your task is to learn how to tell whether a flower belongs to the Alpha or the Beta subspecies. You will be shown the correct answer after each response to help you learn. At first you will just have to guess, but you will gain experience as you go. It may not be easy, but before long you should develop a good sense of how to decide what type of flower is presented. After you complete your training, you will be asked to apply your knowledge to a set of flowers that have not been classified. 
+
+
+Good luck!
+

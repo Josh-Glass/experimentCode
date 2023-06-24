@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <!-- webrunner dependency -->
+        <script src='static/utils.js'></script>
+
+        <!-- materials -->
+        <script src='static/experiments/de4/materials/ocanvas-2.10.0.js'></script>
+        <script src='static/experiments/de4/materials/stimuli.js'></script>
+
+        <!-- experiment phases -->
+        <script src='static/experiments/de4/instructions.js'></script>
+        <script src='static/experiments/de4/edgeClassification.js'></script>
+
+    </head>
+
+    <body style = 'background: rgb(208, 213, 219);'>
+        <div id='main'></div>
+
+        <script type="text/javascript">
+            // window.onbeforeunload = function() { return "Are you sure you want to go back? Your data will not be saved"; }
+
+            // Variable to store subject info & data
+            subject = {
+                id: localStorage.getItem('subject_id'),
+                condition: localStorage.getItem('condition'),
+                // condition: '1',
+                results: {
+                    'trainingPhase': [],
+                    'generalizationPhase': [],
+                }
+            }
+
+            // counterbalance features
+            neworder = stimuli.shuffle([...Array(3).keys()])
+
+            newStimIDs = []
+            for (let s of stimuli.stimIDs) {
+                newStimIDs.push(s[neworder[0]].concat(s[neworder[1]]).concat(s[neworder[2]]))
+            }
+
+            stimuli.stimIDs = newStimIDs
+
+            // stim = stimuli.samplePairSpace('000')
+            // console.log(stim)
+
+            // counter = edgeClassification.shuffle([0,1])[0] // <-- counterbalancer switch unit
+            counter = [1] // ^ just going to go with "match" for this one
+            
+            stimPairsForCondition = []
+            for (let s of [...Array(8).keys()]) {
+
+                // console.log(stimuli.stimIDs[s], stimuli.structures[subject['condition']][s])
+                stimPairsForCondition.push([stimuli.stimIDs[s], stimuli.structures[subject['condition']][s]])
+            }
+            // console.log(stimPairsForCondition)
+
+            // event graph that triggers progression of experiment
+            eventGraph = {
+
+				startingInstructions: function() {
+					instructions.start(
+						{instructions: stimuli['startingInstructions']['1']}, // <-- stimuli comes from `materials/stimuli.py`
+						// eventGraph.end()
+                        eventGraph.trainingPhase
+					)
+                },
+
+                trainingPhase: function() {
+                    edgeClassification.start(
+                        {
+                          'pairs': stimPairsForCondition,
+                          'n_blocks': 10, // 6,
+                          'results': subject['results']['trainingPhase'], // <-- where to store the results
+                          'feedback': true,
+                          'c': counter,
+                        },
+                        eventGraph.generalizationPhaseInstructions
+                    )
+                },
+
+
+                generalizationPhaseInstructions: function () {
+                    instructions.start(
+						{instructions: stimuli['generalizationPhaseInstructions']}, // <-- stimuli comes from `materials/stimuli.py`
+						eventGraph.generalizationPhase
+					)
+                },
+
+                generalizationPhase: function() {
+                    edgeClassification.start(
+                        {
+                          'pairs': stimPairsForCondition,
+                          'n_blocks': 1,
+                          'results': subject['results']['generalizationPhase'], // <-- where to store the results
+                          'feedback': false,
+                          'c': counter,
+                        },
+                        eventGraph.end
+                    )
+                },
+
+				end: function () {
+					instructions.start(
+                        {instructions: stimuli['exitInstructions']},
+                        function () {
+                            // next('hey', subject['id'], subject['condition'], subject)
+                            save(subject)
+                        }
+                    )
+				}
+
+            }
+
+            eventGraph.startingInstructions()
+            // eventGraph.trainingPhase()
+            // eventGraph.generalizationPhaseInstructions()
+
+        </script>
+
+    </body>
+
+</html>
